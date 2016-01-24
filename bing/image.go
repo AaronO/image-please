@@ -78,6 +78,11 @@ func parseResult(html []byte) (results []ImageResult, err error) {
 		}
 	}
 
+	// No results
+	if images == nil {
+		return nil, fmt.Errorf("No results")
+	}
+
 	return images, nil
 }
 
