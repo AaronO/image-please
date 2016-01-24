@@ -1,4 +1,4 @@
-package bingimage
+package bing
 
 import (
 	"fmt"
