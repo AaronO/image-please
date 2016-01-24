@@ -39,6 +39,8 @@ func fetchPage(search string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Required to get correct HTML
+	req.Header.Set("User-Agent", "Mozilla/5.0 Chrome")
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -63,19 +65,16 @@ func parseResult(html []byte) (results []ImageResult, err error) {
 	}
 
 	// Get image tags
-	root := doc.Root()
-	imagesTags, err := root.Search("//a/div/img")
+	imagesTags, err := doc.Search(`//div[@class='dg_u']/a`)
 	if err != nil {
 		return nil, err
 	}
 
 	// Filter and parse
-	images := []ImageResult{}
+	var images []ImageResult
 	for _, tag := range imagesTags {
-		if meta, err := ParseMetadata(tag.Parent().Attr("m")); err == nil {
+		if meta, err := ParseMetadata(tag.Attr("m")); err == nil {
 			images = append(images, metaToResult(meta))
-		} else {
-			return nil, err
 		}
 	}
 
