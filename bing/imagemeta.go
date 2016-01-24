@@ -2,15 +2,27 @@ package bing
 
 import (
 	"encoding/json"
+	"regexp"
 	"strconv"
 )
 
 func ParseMetadata(str string) (*imageMetadata, error) {
 	meta := imageMetadata{}
-	if err := json.Unmarshal([]byte(str), &meta); err != nil {
+	if err := json.Unmarshal([]byte(jsToJSON(str)), &meta); err != nil {
 		return nil, err
 	}
 	return &meta, nil
+}
+
+// Converts a JS like structure to JSON (adds quotes around keys)
+var _jsToJSON = regexp.MustCompile(`[^"](\w+):\"`)
+
+func jsToJSON(str string) string {
+	return _jsToJSON.ReplaceAllStringFunc(str, func(match string) string {
+		head := match[:1]
+		rest := match[1 : len(match)-2]
+		return head + `"` + rest + `":"`
+	})
 }
 
 // A useful type to parse json strings as ints
