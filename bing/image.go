@@ -11,8 +11,13 @@ import (
 
 // ImageResult holds a preview image URL and the source URL
 type ImageResult struct {
-	PreviewImage string
-	Source       string
+	URL     string
+	Preview string
+	Source  string
+
+	Format string
+	Width  int
+	Height int
 }
 
 const base = "http://www.bing.com/images/search?q="
@@ -57,17 +62,31 @@ func parseResult(html []byte) (results []ImageResult, err error) {
 		return nil, err
 	}
 
+	// Get image tags
 	root := doc.Root()
-	previews, err := root.Search("//a/div/img")
+	imagesTags, err := root.Search("//a/div/img")
 	if err != nil {
 		return nil, err
 	}
 
-	var images []ImageResult
-	for _, v := range previews {
-		previewURL := v.Attr("src")
-		images = append(images, ImageResult{PreviewImage: previewURL})
+	// Filter and parse
+	images := []ImageResult{}
+	for _, tag := range imagesTags {
+		if meta, err := ParseMetadata(tag.Parent().Attr("m")); err == nil {
+			images = append(images, metaToResult(meta))
+		} else {
+			return nil, err
+		}
 	}
 
 	return images, nil
+}
+
+func metaToResult(meta *imageMetadata) ImageResult {
+	return ImageResult{
+		URL:    meta.ImageUrl,
+		Width:  int(meta.Width),
+		Height: int(meta.Height),
+		Format: meta.Format,
+	}
 }

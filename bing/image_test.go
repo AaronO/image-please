@@ -10,5 +10,5 @@ func TestFetchHTML(t *testing.T) {
 	if err != nil {
 		t.Errorf("error searching: %s", err)
 	}
-	fmt.Printf("got back %s", results[0].PreviewImage)
+	fmt.Printf("got back %s", results[0].URL)
 }
