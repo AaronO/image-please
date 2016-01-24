@@ -1,8 +1,5 @@
 {
-	"ImportPath": ".",
+	"ImportPath": "github.com/AaronO/image-please",
 	"GoVersion": "go1.5",
-	"Packages": [
-		"./..."
-	],
 	"Deps": []
 }
