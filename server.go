@@ -1,19 +1,46 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/gorilla/mux"
+
 	"github.com/AaronO/image-please/bing"
 )
 
-func RunServer(bindTo string) error {
-	return http.ListenAndServe(normalizePort(bindTo), http.HandlerFunc(handler))
+type ServerStatus struct {
+	Ok bool `json:"ok"`
 }
 
-func handler(rw http.ResponseWriter, req *http.Request) {
+func RunServer(bindTo string) error {
+	return http.ListenAndServe(normalizePort(bindTo), handler())
+}
+
+func handler() http.Handler {
+	r := mux.NewRouter()
+
+	r.Path("/").
+		Methods("GET").
+		HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+
+		data, _ := json.Marshal(ServerStatus{
+			Ok: true,
+		})
+
+		rw.Write(data)
+	})
+
+	// Handler everything else
+	r.Methods("GET").HandlerFunc(queryHandler)
+
+	return r
+}
+
+func queryHandler(rw http.ResponseWriter, req *http.Request) {
 	word := req.URL.String()[1:]
 	if cleanWord, err := url.QueryUnescape(word); err == nil {
 		word = cleanWord
