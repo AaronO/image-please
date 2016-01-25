@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/AaronO/image-please/bing"
+	"./bing"
 )
 
 type ServerStatus struct {
