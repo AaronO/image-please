@@ -10,7 +10,7 @@ import (
 func main() {
 	// App meta-data
 	app := cli.NewApp()
-	app.Version = "0.2.0"
+	app.Version = "0.3.0"
 	app.Name = "image-please"
 	app.Author = "Aaron O'Mullan"
 	app.Email = "aaron@gitbook.com"
