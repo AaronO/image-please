@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/AaronO/image-please/bing"
@@ -14,6 +15,9 @@ func RunServer(bindTo string) error {
 
 func handler(rw http.ResponseWriter, req *http.Request) {
 	word := req.URL.String()[1:]
+	if cleanWord, err := url.QueryUnescape(word); err == nil {
+		word = cleanWord
+	}
 
 	// Search
 	results, err := bing.Search(word)
