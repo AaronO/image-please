@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 
@@ -63,8 +64,12 @@ func queryHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Set cache header
+	// Set cache headers
+	cacheSince := time.Now().Format(http.TimeFormat)
+	cacheUntil := time.Now().AddDate(60, 0, 0).Format(http.TimeFormat)
 	rw.Header().Set("Cache-Control", "max-age:290304000, public")
+	rw.Header().Set("Last-Modified", cacheSince)
+	rw.Header().Set("Expires", cacheUntil)
 
 	// Output body
 	io.Copy(rw, resp.Body)
