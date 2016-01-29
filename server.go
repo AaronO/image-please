@@ -64,7 +64,7 @@ func queryHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	// Set cache header
-	w.Header().Set("Cache-Control", "max-age:290304000, public")
+	rw.Header().Set("Cache-Control", "max-age:290304000, public")
 
 	// Output body
 	io.Copy(rw, resp.Body)
